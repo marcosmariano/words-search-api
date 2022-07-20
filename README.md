@@ -1,7 +1,7 @@
 ## Intro
 API to count how many times the word expected repeat in the files
 ```
-localhost:8080/word/{palavra}
+localhost:8080/word/{word}
 ```
 
 
