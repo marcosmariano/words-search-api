@@ -1,11 +1,27 @@
-#Aplicação para verificar quantas vezes se repete o parametro passado para api
+## Intro
+API to count how many times the word expected repeat in the files
+'''
+localhost:8080/word/{palavra}
+'''
 
 
-#Docker
-- entrar na pasta do projeto
-- executar o comando "docker build -f Dockerfile -t words-api ."
-- logo em sequencia após terminar o passo anterior, executar o seguinte comando "docker run -p 8080:8080 words-api"
+Project dependencies :
+- Java 8
+- Docker 
+- Git CI
+
+# Run
+How to run
+'''
+mvn package
+
+java -jar target/*.jar
+'''
 
 
-#API
-- rodando em um host local, para acessar a api o endereco deve ser acessado "localhost:8080/words/ " sendo que o parametro sera passado após a ultima /, como por exemplo, quero buscar quantas vezes a palavra teste se repete então digite "localhost:8080/b2w/words/teste" 
+# Run from Docker
+'''
+docker build -f Dockerfile -t words-api .
+
+docker run -p 8080:8080 words-api
+'''
