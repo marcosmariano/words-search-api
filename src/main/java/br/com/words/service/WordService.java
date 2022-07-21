@@ -10,27 +10,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class WordService {
 	
-	private String param = "";
-	private List<Object> arquivos = new ArrayList<>();
+	private List<Object> files;
 	private final String path = "words-amostra";
         
-	private final	String extensao = ".csv";
-	private int i = 0;
-	private Integer count = 0;
-			
+	private final	String extensionFile = ".csv";
 	
-	
-	public WordService(String param) {
-		super();
-		this.param = param;
-	}
-	
-	public void verificaArquivos() {
-		this.arquivos = new ArrayList<>();
+	public void validationFiles() {
+		this.files = new ArrayList<>();
 		
 		File caminho = new File(this.path);
 		boolean caminhoValido = caminho.exists();
@@ -39,34 +30,34 @@ public class WordService {
 		if(caminhoValido && eDiretorio){
 			String[] conteudo = caminho.list();
 			for (String arquivo : conteudo) {
-				if(arquivo.contains(this.extensao)){
-					//Adiciona o arquivo na lista de arquivos
-					this.arquivos.add(arquivo);
+				if(arquivo.contains(this.extensionFile)){
+					this.files.add(arquivo);
 				}
 			}
 		}
 	}
 	
-	public  Integer searchWord() {
+	public  Integer searchWord(String param) {
 		new ArrayList<>();
-		verificaArquivos();
+		validationFiles();
+		 AtomicInteger i = new AtomicInteger();
+		 AtomicInteger count = new AtomicInteger();
 		
-		this.arquivos.forEach(arquivo->{
+		this.files.forEach(arquivo->{
 			try {
 				BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(this.path+"/"+arquivo.toString())));
 				
 				try {
 					while((reader.readLine()) != null) {
-						i=0;
+						i.set(0);
 						reader.lines().forEach(linha -> {
-							i++;
-							System.out.println("Arquivo "+arquivo.toString()+"Linha "+i);
-							if(linha.contains(this.param)) {
-								this.count ++;
-								System.out.println(this.count);
+							i.getAndIncrement();
+							System.out.println("Arquivo "+arquivo.toString()+" Linha "+i);
+							if(linha.contentEquals(param)) {
+								count.getAndIncrement();
+								System.out.println(count);
 								}
 						});
-						
 					}
 					
 				} catch (IOException e) {
@@ -78,6 +69,6 @@ public class WordService {
 			}	
 		});
 		
-		return this.count;
+		return count.get();
 	}
 }
