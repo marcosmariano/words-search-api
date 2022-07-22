@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProductController {
-	@Autowired
-	FileService fileService;
+    @Autowired
+    FileService fileService;
 
-	@RequestMapping(value = "/word/{param}", method = RequestMethod.GET)
+    @RequestMapping(value = "/word/{param}", method = RequestMethod.GET)
     public String setParam(@PathVariable("param") String param, Model model) {
-		return param+" se repete "+ fileService.countWord(param)+ " vezes";
+        return param + " se repete " + fileService.countWord(param) + " vezes";
     }
 }
