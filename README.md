@@ -1,5 +1,5 @@
 ## Intro
-API to count how many times the word expected repeat in the files
+API to count how many times the word expected repeat in the files and testing how to read the files in parallel
 ```
 localhost:8080/word/{word}
 ```
