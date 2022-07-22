@@ -3,14 +3,8 @@ package br.com.words.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.io.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,7 +22,7 @@ public class FileServiceImpl implements FileService {
         File file = new File(this.path);
 
         if (file.exists() && file.isDirectory()) {
-            files = Arrays.stream(file.list())
+            files = Arrays.stream(Objects.requireNonNull(file.list()))
                     .filter(f -> f.contains(extensionFile))
                     .collect(Collectors.toList());
         }
@@ -36,27 +30,37 @@ public class FileServiceImpl implements FileService {
         return files;
     }
 
-    public Long countWord(String param) {
-        AtomicReference<Long> count = new AtomicReference<>(0L);
+    private BufferedReader accessFile(Object file) throws FileNotFoundException {
+        BufferedReader reader =
+                new BufferedReader(
+                        new InputStreamReader(
+                                new FileInputStream(path + "/" + file.toString())));
+        return  reader;
+    }
 
-        getValidFiles().parallelStream().forEach(file -> {
+    public List<String> getWords(List<Object> files)
+    {
+        List<String> words = new ArrayList<>();
+        files.parallelStream().forEach(file -> {
             try {
-                BufferedReader reader =
-                        new BufferedReader(
-                                new InputStreamReader(
-                                        new FileInputStream(path + "/" + file.toString())));
-                count.set(
-                        reader.lines()
-                                .collect(Collectors.toList())
-                                .parallelStream()
-                                .filter(l -> l.contentEquals(param))
-                                .count() + count.get());
+                BufferedReader reader = accessFile(file);
+                words.addAll(reader.lines().collect(Collectors.toList()));
                 reader.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
-        return count.get();
+        return words;
+    }
+
+    public Long countWord(String param) {
+        if(param != null)
+           return getWords(getValidFiles())
+                    .stream()
+                    .filter(l -> l.contains(param.trim().toLowerCase(Locale.ROOT)))
+                    .count();
+
+        return 0L;
     }
 }
